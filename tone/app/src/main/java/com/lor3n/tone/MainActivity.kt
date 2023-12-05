@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.lor3n.tone.ui.theme.ToneTheme
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.util.Log
@@ -21,8 +22,10 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -32,6 +35,7 @@ import androidx.compose.material.icons.filled.Cameraswitch
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,139 +45,86 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(!hasRequiredPermissions()){
+        if (!hasRequiredPermissions()) {
             ActivityCompat.requestPermissions(
                 this, CAMERAX_PERMISSIONS, 0
             )
         }
         setContent {
             ToneTheme {
-                val scope = rememberCoroutineScope()
-                val scaffoldState = rememberBottomSheetScaffoldState()
-                val controller = remember{
-                    LifecycleCameraController(applicationContext).apply {
-                        setEnabledUseCases(
-                            CameraController.IMAGE_CAPTURE
-                        )
-                    }
-                }
-                val viewModel = viewModel<MainViewModel>()
-                val bitmaps by viewModel.bitmaps.collectAsState()
-
-                BottomSheetScaffold(
-                    scaffoldState = scaffoldState,
-                    sheetPeekHeight = 0.dp,
-                    sheetContent = {
-                        PhotoBottomSheetContent(
-                            bitmaps = bitmaps,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                ) { padding ->
-                    Box (
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(padding)
-                    ){
-                        CameraPreview(
-                            controller = controller,
-                            modifier = Modifier
-                                .fillMaxSize()
-                        )
-
-                        IconButton(
-                            onClick = {
-                                controller.cameraSelector =
-                                    if(controller.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA){
-                                        CameraSelector.DEFAULT_FRONT_CAMERA
-                                    } else {
-                                        CameraSelector.DEFAULT_BACK_CAMERA
-                                    }
-                            },
-                            modifier = Modifier
-                                .offset(16.dp, 16.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Cameraswitch,
-                                contentDescription = "Switch camera"
-                            )
-                        }
-
-                        Row (
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .align(Alignment.BottomCenter)
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceAround
-                        )
-                        {
-                            IconButton(
-                                onClick = {
-                                          scope.launch {
-                                              scaffoldState.bottomSheetState.expand()
-                                          }
-                                },
-                                modifier = Modifier
-                                    .offset(16.dp, 16.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Photo,
-                                    contentDescription = "Open Gallery"
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-                                    takePhoto(
-                                        controller = controller,
-                                        onPhotoTaken = viewModel::onTakePhoto
-                                    )
-                                },
-                                modifier = Modifier
-                                    .offset(16.dp, 16.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.PhotoCamera,
-                                    contentDescription = "Take Photo"
-                                )
-                            }
-                        }
-
-                    }
-                }
+                Homepage()
             }
         }
     }
 
-    private fun takePhoto(
-        controller: LifecycleCameraController,
-        onPhotoTaken: (Bitmap) -> Unit
-    ){
-        controller.takePicture(
-            ContextCompat.getMainExecutor(applicationContext),
-            object : OnImageCapturedCallback(){
-                override fun onCaptureSuccess(image: ImageProxy) {
-                    super.onCaptureSuccess(image)
-
-                    onPhotoTaken(image.toBitmap())
+    @Composable
+    private fun Homepage(){
+        Surface (
+            modifier = Modifier
+                .background(color = Color.White)
+        ){
+            Column (
+                modifier = Modifier
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ){
+                Button(
+                    onClick = {
+                        val intent = Intent(this@MainActivity, CameraActivity::class.java)
+                        startActivity(intent)
+                    },
+                    modifier = Modifier
+                        .padding(16.dp)
+                ) {
+                    Text("Camera")
                 }
-
-                override fun onError(exception: ImageCaptureException) {
-                    super.onError(exception)
-                    Log.e("Camera", "Couldn't take photo")
+                Button(
+                    onClick = {
+                        //val intent = Intent(this@MainActivity, GalleryActivity::class.java)
+                        //startActivity(intent)
+                    },
+                    modifier = Modifier
+                        .padding(16.dp)
+                ) {
+                    Text("Gallery")
+                }
+                Button(
+                    onClick = {
+                        //val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                        //startActivity(intent)
+                    },
+                    modifier = Modifier
+                        .padding(16.dp)
+                ) {
+                    Text("Sign In")
+                }
+                Button(
+                    onClick = {
+                        //val intent = Intent(this@MainActivity, SigninActivity::class.java)
+                        //startActivity(intent)
+                    },
+                    modifier = Modifier
+                        .padding(16.dp)
+                ) {
+                    Text("Log In")
                 }
             }
-        )
+        }
     }
 
     private fun hasRequiredPermissions(): Boolean{
