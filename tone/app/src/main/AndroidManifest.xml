@@ -19,10 +19,20 @@
         android:theme="@style/Theme.Tone"
         tools:targetApi="31">
         <activity
+            android:name=".SigninActivity"
+            android:exported="false"
+            android:label="@string/title_activity_signin"
+            android:theme="@style/Theme.Tone" />
+        <activity
+            android:name=".HomepageActivity"
+            android:exported="false"
+            android:label="@string/title_activity_login"
+            android:theme="@style/Theme.Tone" />
+        <activity
             android:name=".CameraActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Tone">
