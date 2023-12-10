@@ -14,6 +14,7 @@ import com.lor3n.tone.ui.theme.ToneTheme
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.flow.MutableStateFlow
 
 
 class HomepageActivity : ComponentActivity() {
@@ -36,16 +38,20 @@ class HomepageActivity : ComponentActivity() {
         }
         setContent {
             ToneTheme {
-                Homepage()
+                val bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
+                Homepage(bitmaps)
             }
         }
     }
 
     @Composable
-    private fun Homepage(){
+    private fun Homepage(
+        photos: MutableStateFlow<List<Bitmap>>
+    ){
         Surface (
             modifier = Modifier
                 .background(color = Color.White)
+                .fillMaxSize()
         ){
             Column (
                 modifier = Modifier
@@ -75,23 +81,12 @@ class HomepageActivity : ComponentActivity() {
                 }
                 Button(
                     onClick = {
-                        //val intent = Intent(this@MainActivity, LoginActivity::class.java)
-                        //startActivity(intent)
+                        /*Download photo from Firebase*/
                     },
                     modifier = Modifier
                         .padding(16.dp)
                 ) {
-                    Text("Sign In")
-                }
-                Button(
-                    onClick = {
-                        //val intent = Intent(this@MainActivity, SigninActivity::class.java)
-                        //startActivity(intent)
-                    },
-                    modifier = Modifier
-                        .padding(16.dp)
-                ) {
-                    Text("Log In")
+                    Text("Download from firebase")
                 }
             }
         }

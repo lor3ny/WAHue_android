@@ -118,7 +118,7 @@ class LoginActivity : ComponentActivity() {
 
     private fun verifyCredentials(): Boolean{
         /* Firebase verification */
-        return false;
+        return true;
     }
 
     private fun goToHomapage(): Unit{
