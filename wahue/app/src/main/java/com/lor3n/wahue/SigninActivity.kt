@@ -1,19 +1,18 @@
-package com.lor3n.tone
+package com.lor3n.wahue
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Arrangement.Bottom
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Key
-import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +20,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,14 +28,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.Role.Companion.Button
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import com.lor3n.tone.ui.theme.ui.theme.ToneTheme
+import com.lor3n.tone.ui.theme.ToneTheme
 
-class LoginActivity : ComponentActivity() {
+class SigninActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -47,22 +42,25 @@ class LoginActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LoginPage()
+                    Signin()
                 }
             }
         }
     }
+
+
     @Composable
-    fun LoginPage() {
+    fun Signin() {
         var emailInput by remember { mutableStateOf("") }
         var passwordInput by remember { mutableStateOf("") }
+        var verPasswordInput by remember { mutableStateOf("") }
         var resultText by remember { mutableStateOf("") }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ){
             Text(
-                text = "Welcome",
+                text = "A newcomer!",
                 style = MaterialTheme.typography.headlineMedium
             )
             Text(
@@ -92,22 +90,30 @@ class LoginActivity : ComponentActivity() {
                 placeholder = { Text(text = "Enter your Password") },
                 modifier = Modifier.padding(5.dp)
             )
+            OutlinedTextField(
+                value = verPasswordInput,
+                leadingIcon = { Icon(imageVector = Icons.Default.Check, contentDescription = "emailIcon") },
+                //trailingIcon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
+                onValueChange = {
+                    verPasswordInput = it
+                },
+                label = { Text(text = "Verify Password") },
+                placeholder = { Text(text = "Enter your Password") },
+                modifier = Modifier.padding(5.dp)
+            )
             Row(){
                 OutlinedButton(
                     onClick = {
-                        var result:Boolean = verifyCredentials()
-                        if(!result){
-                            resultText = "Email or password not exists"
+                        if(verifyEmailExistance()){
+                            resultText = "The email already exists"
                         } else {
-                            goToHomapage()
+                            if(passwordInput != verPasswordInput){
+                                resultText = "Passwords are not equal"
+                            } else {
+                                addCredentials()
+                            }
                         }
                     },
-                    Modifier.padding(10.dp)
-                ){
-                    Text("Log In")
-                }
-                FilledTonalButton(
-                    onClick = { goToSignIn() },
                     Modifier.padding(10.dp)
                 ){
                     Text("Sign In")
@@ -116,27 +122,21 @@ class LoginActivity : ComponentActivity() {
         }
     }
 
-    private fun verifyCredentials(): Boolean{
-        /* Firebase verification */
-        return true;
+    private fun verifyEmailExistance(): Boolean{
+        return false
     }
 
-    private fun goToHomapage(): Unit{
-        val intent = Intent(this@LoginActivity, HomepageActivity::class.java)
-        startActivity(intent)
-
-    }
-
-    private fun goToSignIn(): Unit{
-        val intent = Intent(this@LoginActivity, SigninActivity::class.java)
+    private fun addCredentials(): Unit{
+        /* Firebase adding */
+        val intent = Intent(this@SigninActivity, HomepageActivity::class.java)
         startActivity(intent)
     }
 
     @Preview(showBackground = true)
     @Composable
-    fun LoginPagePreview() {
+    fun GreetingPreview() {
         ToneTheme {
-            LoginPage()
+            Signin()
         }
     }
 }

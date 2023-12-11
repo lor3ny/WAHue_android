@@ -1,4 +1,4 @@
-package com.lor3n.tone
+package com.lor3n.wahue
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

@@ -1,4 +1,4 @@
-package com.lor3n.tone
+package com.lor3n.wahue
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

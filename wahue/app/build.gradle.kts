@@ -1,14 +1,15 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.lor3n.tone"
+    namespace = "com.lor3n.wahue"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.lor3n.tone"
+        applicationId = "com.lor3n.wahue"
         minSdk = 21
         targetSdk = 34
         versionCode = 1
@@ -82,6 +83,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
+    // CameraX
     val cameraxVersion = "1.3.0-rc01"
 
     implementation("androidx.camera:camera-core:$cameraxVersion")
@@ -91,4 +93,7 @@ dependencies {
 
     implementation("androidx.camera:camera-view:$cameraxVersion")
     implementation("androidx.camera:camera-extensions:$cameraxVersion")
+
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
 }
