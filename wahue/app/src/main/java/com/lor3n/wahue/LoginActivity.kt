@@ -35,7 +35,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.lor3n.tone.ui.theme.ui.theme.ToneTheme
+import com.lor3n.wahue.ui.theme.ui.theme.ToneTheme
+import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,7 +96,7 @@ class LoginActivity : ComponentActivity() {
             Row(){
                 OutlinedButton(
                     onClick = {
-                        var result:Boolean = verifyCredentials()
+                        var result:Boolean = verifyCredentials(emailInput, passwordInput)
                         if(!result){
                             resultText = "Email or password not exists"
                         } else {
@@ -116,9 +117,23 @@ class LoginActivity : ComponentActivity() {
         }
     }
 
-    private fun verifyCredentials(): Boolean{
-        /* Firebase verification */
-        return true;
+
+    private fun verifyCredentials(email: String, password: String): Boolean{
+        var result = false
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Login successful
+                    val user = firebaseAuth.currentUser
+                    result = true
+                    // You can handle the logged-in user here
+                } else {
+                    // Login failed
+                    result = false
+                    // You can display an error message or handle the failure case
+                }
+        }
+        return result;
     }
 
     private fun goToHomapage(): Unit{
