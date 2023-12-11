@@ -30,11 +30,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.lor3n.tone.ui.theme.ToneTheme
+import com.google.firebase.auth.FirebaseAuth
+import com.lor3n.wahue.ui.theme.ToneTheme
 
 class SigninActivity : ComponentActivity() {
+
+    private lateinit var firebaseAuth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+
+        firebaseAuth = FirebaseAuth.getInstance()
+
         setContent {
             ToneTheme {
                 // A surface container using the 'background' color from the theme
@@ -110,7 +117,7 @@ class SigninActivity : ComponentActivity() {
                             if(passwordInput != verPasswordInput){
                                 resultText = "Passwords are not equal"
                             } else {
-                                addCredentials()
+                                addCredentials(emailInput, passwordInput)
                             }
                         }
                     },
@@ -126,10 +133,19 @@ class SigninActivity : ComponentActivity() {
         return false
     }
 
-    private fun addCredentials(): Unit{
-        /* Firebase adding */
-        val intent = Intent(this@SigninActivity, HomepageActivity::class.java)
-        startActivity(intent)
+    private fun addCredentials(email: String, password: String): Unit{
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Registration successful
+                    val user = firebaseAuth.currentUser
+                    val intent = Intent(this@SigninActivity, HomepageActivity::class.java)
+                    startActivity(intent)
+                    // You can handle the registered user here
+                } else {
+                    // Registration failed
+                }
+            }
     }
 
     @Preview(showBackground = true)

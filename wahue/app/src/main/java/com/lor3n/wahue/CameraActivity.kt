@@ -37,7 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.lor3n.tone.ui.theme.ToneTheme
+import com.lor3n.wahue.ui.theme.ToneTheme
 import kotlinx.coroutines.launch
 
 class CameraActivity : AppCompatActivity() {

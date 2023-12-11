@@ -39,11 +39,14 @@ import com.lor3n.wahue.ui.theme.ui.theme.ToneTheme
 import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : ComponentActivity() {
+
+    private lateinit var firebaseAuth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ToneTheme {
                 // A surface container using the 'background' color from the theme
+                firebaseAuth = FirebaseAuth.getInstance()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
