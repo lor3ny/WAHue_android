@@ -1,4 +1,4 @@
-package com.lor3n.tone.ui.theme.ui.theme
+package com.lor3n.wahue.ui.theme.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

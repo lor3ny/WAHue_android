@@ -1,4 +1,4 @@
-package com.lor3n.tone.ui.theme.ui.theme
+package com.lor3n.wahue.ui.theme.ui.theme
 
 import android.app.Activity
 import android.os.Build

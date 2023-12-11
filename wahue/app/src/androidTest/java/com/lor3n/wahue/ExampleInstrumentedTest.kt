@@ -1,4 +1,4 @@
-package com.lor3n.tone
+package com.lor3n.wahue
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
