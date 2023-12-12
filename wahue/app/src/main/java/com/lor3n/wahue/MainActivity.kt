@@ -26,9 +26,22 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.flow.MutableStateFlow
+import com.google.firebase.Firebase
+import com.google.firebase.initialize
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageException
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.component1
+import com.google.firebase.storage.component2
+import com.google.firebase.storage.component3
+import com.google.firebase.storage.storage
+import com.google.firebase.storage.storageMetadata
 
 
 class HomepageActivity : ComponentActivity() {
+
+    lateinit var storage: FirebaseStorage
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!hasRequiredPermissions()) {
@@ -36,6 +49,9 @@ class HomepageActivity : ComponentActivity() {
                 this, CAMERAX_PERMISSIONS, 0
             )
         }
+
+        storage = Firebase.storage
+
         setContent {
             ToneTheme {
                 val bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())

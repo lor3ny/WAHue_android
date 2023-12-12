@@ -56,6 +56,16 @@ class LoginActivity : ComponentActivity() {
             }
         }
     }
+
+    public override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = firebaseAuth.currentUser
+        if (currentUser != null) {
+            goToHomapage()
+        }
+    }
+
     @Composable
     fun LoginPage() {
         var emailInput by remember { mutableStateOf("") }
