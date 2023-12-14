@@ -4,43 +4,41 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.lor3n.wahue.ui.theme.ToneTheme
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.widget.ImageView
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.flow.MutableStateFlow
 import com.google.firebase.Firebase
-import com.google.firebase.initialize
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageException
-import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.component1
-import com.google.firebase.storage.component2
-import com.google.firebase.storage.component3
 import com.google.firebase.storage.storage
-import com.google.firebase.storage.storageMetadata
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 
 class HomepageActivity : ComponentActivity() {
 
-    lateinit var storage: FirebaseStorage
+    private lateinit var storage: FirebaseStorage
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +48,7 @@ class HomepageActivity : ComponentActivity() {
             )
         }
 
+        auth = Firebase.auth
         storage = Firebase.storage
 
         setContent {
@@ -69,11 +68,11 @@ class HomepageActivity : ComponentActivity() {
                 .background(color = Color.White)
                 .fillMaxSize()
         ){
-            Column (
+            Row (
                 modifier = Modifier
                     .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.Top
             ){
                 Button(
                     onClick = {
@@ -105,7 +104,14 @@ class HomepageActivity : ComponentActivity() {
                     Text("Download from firebase")
                 }
             }
+            Column {
+
+            }
         }
+    }
+
+    private fun DonwloadUserImages(){
+        //
     }
 
     private fun hasRequiredPermissions(): Boolean{

@@ -35,18 +35,21 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.google.firebase.Firebase
 import com.lor3n.wahue.ui.theme.ui.theme.ToneTheme
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 
 class LoginActivity : ComponentActivity() {
 
-    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ToneTheme {
                 // A surface container using the 'background' color from the theme
-                firebaseAuth = FirebaseAuth.getInstance()
+                auth = Firebase.auth
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -57,20 +60,23 @@ class LoginActivity : ComponentActivity() {
         }
     }
 
+    /*
     public override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = firebaseAuth.currentUser
         if (currentUser != null) {
-            goToHomapage()
+            goToHomepage()
         }
     }
+    */
 
     @Composable
     fun LoginPage() {
         var emailInput by remember { mutableStateOf("") }
         var passwordInput by remember { mutableStateOf("") }
         var resultText by remember { mutableStateOf("") }
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -109,12 +115,19 @@ class LoginActivity : ComponentActivity() {
             Row(){
                 OutlinedButton(
                     onClick = {
-                        var result:Boolean = verifyCredentials(emailInput, passwordInput)
-                        if(!result){
-                            resultText = "Email or password not exists"
-                        } else {
-                            goToHomapage()
-                        }
+                        auth.signInWithEmailAndPassword(emailInput, passwordInput)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    goToHomepage()
+                                } else {
+                                    val exception = task.exception
+                                    if (exception != null) {
+                                        // Handle specific exceptions here if needed
+                                        val errorMessage = exception.message ?: "Unknown error occurred"
+                                        resultText = errorMessage
+                                    }
+                                }
+                            }
                     },
                     Modifier.padding(10.dp)
                 ){
@@ -130,29 +143,9 @@ class LoginActivity : ComponentActivity() {
         }
     }
 
-
-    private fun verifyCredentials(email: String, password: String): Boolean{
-        var result = false
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // Login successful
-                    val user = firebaseAuth.currentUser
-                    result = true
-                    // You can handle the logged-in user here
-                } else {
-                    // Login failed
-                    result = false
-                    // You can display an error message or handle the failure case
-                }
-        }
-        return result;
-    }
-
-    private fun goToHomapage(): Unit{
+    private fun goToHomepage(): Unit{
         val intent = Intent(this@LoginActivity, HomepageActivity::class.java)
         startActivity(intent)
-
     }
 
     private fun goToSignIn(): Unit{
