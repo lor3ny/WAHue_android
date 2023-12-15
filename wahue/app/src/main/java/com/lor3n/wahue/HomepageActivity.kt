@@ -21,6 +21,7 @@ import android.widget.ImageView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -94,10 +95,14 @@ class HomepageActivity : ComponentActivity() {
                     Column(
                         //modifier = Modifier.verticalScroll()
                     ){
-                        Text(
-                            text = auth.currentUser?.email.toString(),
-                            textAlign = TextAlign.Center
-                        )
+                        Box(
+  
+                        ){
+                            Text(
+                                text = auth.currentUser?.email.toString(),
+                                textAlign = TextAlign.Center
+                            )
+                        }
                         Row (
                             modifier = Modifier
                                 .padding(16.dp),
@@ -117,6 +122,7 @@ class HomepageActivity : ComponentActivity() {
                             Button(
                                 onClick = {
                                     GlobalScope.launch(Dispatchers.IO) {
+                                        imageUrls.removeAll(imageUrls)
                                         val fetchedImageUrls = getAllImageUrlsFromFirebaseStorage()
                                         imageUrls.addAll(fetchedImageUrls)
                                     }
@@ -162,7 +168,7 @@ class HomepageActivity : ComponentActivity() {
 
 
     suspend fun getAllImageUrlsFromFirebaseStorage(): List<String> {
-        val imagesRef = storage.reference.child("images") // Change this to your Firebase Storage path
+        val imagesRef = storage.reference.child("${auth.currentUser?.uid}/images/") // Change this to your Firebase Storage path
         println("Starting Firebase retreving")
         return try {
             val imageUrls = mutableListOf<String>()

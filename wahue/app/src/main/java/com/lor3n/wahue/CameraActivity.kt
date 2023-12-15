@@ -141,7 +141,7 @@ class CameraActivity : AppCompatActivity() {
                     val data = byteStream.toByteArray()
 
                     val ranInt: Int = (0..1000).random()
-                    val imagesRef = storage.reference.child("images/image_"+ranInt.toString()+".png")
+                    val imagesRef = storage.reference.child("${auth.currentUser?.uid}/images/image_"+ranInt.toString()+".png")
                     val uploadTask = imagesRef.putBytes(data)
 
                     uploadTask.addOnSuccessListener { taskSnapshot ->
