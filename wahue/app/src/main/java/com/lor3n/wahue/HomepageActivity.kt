@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -58,7 +59,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
-import com.bumptech.glide.Glide
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -93,16 +93,14 @@ class HomepageActivity : ComponentActivity() {
                         .fillMaxSize()
                 ){
                     Column(
-                        //modifier = Modifier.verticalScroll()
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ){
-                        Box(
-  
-                        ){
-                            Text(
-                                text = auth.currentUser?.email.toString(),
-                                textAlign = TextAlign.Center
-                            )
-                        }
+                        Text(
+                            text = auth.currentUser?.email.toString(),
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .align(Alignment.CenterHorizontally)
+                        )
                         Row (
                             modifier = Modifier
                                 .padding(16.dp),
@@ -132,14 +130,16 @@ class HomepageActivity : ComponentActivity() {
                             ) {
                                 Text("Update")
                             }
-                            Text(
-                                text = imageUrls.size.toString(),
-                                modifier = Modifier
-                                    .padding(16.dp)
-                            )
                         }
+                        Text(
+                            text = imageUrls.size.toString(),
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .align(Alignment.CenterHorizontally)
+                        )
                         Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.verticalScroll(rememberScrollState())
                         ) {
                             for (imageUrl in imageUrls) {
                                 Image(

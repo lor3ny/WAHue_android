@@ -103,7 +103,8 @@ dependencies {
     implementation("com.google.firebase:firebase-storage")
     // Also add the dependency for the Google Play services library and specify its version
     implementation("com.google.android.gms:play-services-auth:20.7.0")
-    implementation("io.coil-kt:coil-compose:2.2.0")
+    implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.github.bumptech.glide:glide:4.14.2")
+    //implementation(":opencv-sdk")
 
 }

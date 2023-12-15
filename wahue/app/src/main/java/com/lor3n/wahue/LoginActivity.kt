@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Key
@@ -64,7 +66,7 @@ class LoginActivity : ComponentActivity() {
     public override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = firebaseAuth.currentUser
+        val currentUser = auth.currentUser
         if (currentUser != null) {
             goToHomepage()
         }
@@ -79,11 +81,12 @@ class LoginActivity : ComponentActivity() {
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.verticalScroll(rememberScrollState())
         ){
             Text(
-                text = "Welcome",
-                style = MaterialTheme.typography.headlineMedium
+                text = "WAHue",
+                style = MaterialTheme.typography.titleLarge
             )
             Text(
                 text = resultText,
