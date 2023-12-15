@@ -37,19 +37,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.storage
 import com.lor3n.wahue.ui.theme.ToneTheme
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import kotlin.random.Random
 
 class CameraActivity : AppCompatActivity() {
 
-    @OptIn(ExperimentalMaterial3Api::class)
+
+    private lateinit var storage: FirebaseStorage
+    private lateinit var auth: FirebaseAuth
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        auth = Firebase.auth
+        storage = Firebase.storage
+
         setContent {
             ToneTheme {
                 ToneTheme {
-                    val scope = rememberCoroutineScope()
-                    val scaffoldState = rememberBottomSheetScaffoldState()
                     val controller = remember{
                         LifecycleCameraController(applicationContext).apply {
                             setEnabledUseCases(
@@ -57,88 +70,56 @@ class CameraActivity : AppCompatActivity() {
                             )
                         }
                     }
-                    val viewModel = viewModel<MainViewModel>()
-                    val bitmaps by viewModel.bitmaps.collectAsState()
 
-                    BottomSheetScaffold(
-                        scaffoldState = scaffoldState,
-                        sheetPeekHeight = 0.dp,
-                        sheetContent = {
-                            PhotoBottomSheetContent(
-                                bitmaps = bitmaps,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            )
-                        }
-                    ) { padding ->
-                        Box (
+                    Box (
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        CameraPreview(
+                            controller = controller,
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(padding)
-                        ){
-                            CameraPreview(
-                                controller = controller,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                            )
+                        )
 
+                        IconButton(
+                            onClick = {
+                                controller.cameraSelector =
+                                    if (controller.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
+                                        CameraSelector.DEFAULT_FRONT_CAMERA
+                                    } else {
+                                        CameraSelector.DEFAULT_BACK_CAMERA
+                                    }
+                            },
+                            modifier = Modifier
+                                .offset(16.dp, 16.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Cameraswitch,
+                                contentDescription = "Switch camera"
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.BottomCenter)
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceAround
+                        )
+                        {
                             IconButton(
                                 onClick = {
-                                    controller.cameraSelector =
-                                        if(controller.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA){
-                                            CameraSelector.DEFAULT_FRONT_CAMERA
-                                        } else {
-                                            CameraSelector.DEFAULT_BACK_CAMERA
-                                        }
+                                    takePhoto(
+                                        controller = controller
+                                    )
                                 },
                                 modifier = Modifier
-                                    .offset(16.dp, 16.dp)
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Cameraswitch,
-                                    contentDescription = "Switch camera"
+                                    imageVector = Icons.Default.PhotoCamera,
+                                    contentDescription = "Take Photo"
                                 )
                             }
-
-                            Row (
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .align(Alignment.BottomCenter)
-                                    .padding(16.dp),
-                                horizontalArrangement = Arrangement.SpaceAround
-                            )
-                            {
-                                IconButton(
-                                    onClick = {
-                                        scope.launch {
-                                            scaffoldState.bottomSheetState.expand()
-                                        }
-                                    },
-                                    modifier = Modifier
-                                        .offset(16.dp, 16.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Photo,
-                                        contentDescription = "Open Gallery"
-                                    )
-                                }
-                                IconButton(
-                                    onClick = {
-                                        takePhoto(
-                                            controller = controller,
-                                            onPhotoTaken = viewModel::onTakePhoto
-                                        )
-                                    },
-                                    modifier = Modifier
-                                        .offset(16.dp, 16.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.PhotoCamera,
-                                        contentDescription = "Take Photo"
-                                    )
-                                }
-                            }
-
                         }
                     }
                 }
@@ -148,7 +129,6 @@ class CameraActivity : AppCompatActivity() {
 
     private fun takePhoto(
         controller: LifecycleCameraController,
-        onPhotoTaken: (Bitmap) -> Unit
     ){
         controller.takePicture(
             ContextCompat.getMainExecutor(applicationContext),
@@ -156,7 +136,19 @@ class CameraActivity : AppCompatActivity() {
                 override fun onCaptureSuccess(image: ImageProxy) {
                     super.onCaptureSuccess(image)
 
-                    onPhotoTaken(image.toBitmap())
+                    val byteStream = ByteArrayOutputStream()
+                    image.toBitmap().compress(Bitmap.CompressFormat.PNG, 100, byteStream)
+                    val data = byteStream.toByteArray()
+
+                    val ranInt: Int = (0..1000).random()
+                    val imagesRef = storage.reference.child("images/image_"+ranInt.toString()+".png")
+                    val uploadTask = imagesRef.putBytes(data)
+
+                    uploadTask.addOnSuccessListener { taskSnapshot ->
+                        println("Uploaded")
+                    }.addOnFailureListener { exception ->
+                        println("Not uploaded")
+                    }
                 }
 
                 override fun onError(exception: ImageCaptureException) {
