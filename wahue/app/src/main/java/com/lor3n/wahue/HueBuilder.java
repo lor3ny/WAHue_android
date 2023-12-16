@@ -1,7 +1,7 @@
 package com.lor3n.wahue;
 
 import android.graphics.Bitmap;
-
+/*
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -41,3 +41,4 @@ class HueBuilder {
     }
 
 }
+ */

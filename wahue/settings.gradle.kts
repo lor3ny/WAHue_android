@@ -15,4 +15,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "tone"
 include(":app")
-include( ":opencv-sdk")
