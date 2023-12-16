@@ -137,7 +137,11 @@ class CameraActivity : AppCompatActivity() {
                     super.onCaptureSuccess(image)
 
                     val byteStream = ByteArrayOutputStream()
-                    image.toBitmap().compress(Bitmap.CompressFormat.PNG, 100, byteStream)
+                    var bitmapPhoto: Bitmap = image.toBitmap()
+                    var hue: HueBuilder = HueBuilder(bitmapPhoto)
+                    hue.BuildHueImage()
+
+                    hue.GetHueImage().compress(Bitmap.CompressFormat.PNG, 100, byteStream)
                     val data = byteStream.toByteArray()
 
                     val ranInt: Int = (0..1000).random()

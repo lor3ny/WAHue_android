@@ -73,6 +73,7 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
     implementation("com.google.firebase:firebase-auth-ktx:22.3.0")
+    implementation(project(":opencv-sdk"))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -105,6 +106,4 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.github.bumptech.glide:glide:4.14.2")
-    //implementation(":opencv-sdk")
-
 }
