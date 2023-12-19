@@ -3,6 +3,7 @@ package com.lor3n.wahue
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Canvas
+import android.graphics.Matrix
 import androidx.palette.graphics.Palette
 
 
@@ -14,11 +15,12 @@ class HueBuilder constructor(image: Bitmap)
 
     public fun BuildHue(){
 
+        startImage = Bitmap.createScaledBitmap(startImage, startImage.width/3, startImage.height/3, true);
+
+
         val palette = Palette.from(startImage).generate()
         val dominantColorsBitmaps = mutableListOf<Bitmap>()
 
-        val resWidth: Int = 1920
-        val resHeight: Int = 1440
         val border: Int = 100
 
         // Extract 5 dominant colors if available
@@ -27,8 +29,8 @@ class HueBuilder constructor(image: Bitmap)
         for (i in 0 until numColorsToExtract) {
             val color = swatches[i].rgb
 
-            var hueWidth: Int = (resWidth-border)/numColorsToExtract
-            val colBitmap = Bitmap.createBitmap(hueWidth, resHeight/3-border , Bitmap.Config.ARGB_8888)
+            var hueWidth: Int = (startImage.width)/numColorsToExtract
+            val colBitmap = Bitmap.createBitmap(hueWidth, startImage.height/3 , Bitmap.Config.ARGB_8888)
             val canvas = Canvas(colBitmap)
             canvas.drawColor(color)
             dominantColorsBitmaps.add(colBitmap)
@@ -43,19 +45,18 @@ class HueBuilder constructor(image: Bitmap)
             hueBitmap = appendRightBitmaps(hueBitmap,bitmap)
         }
 
-        var borderedHueBitmap = Bitmap.createBitmap(resWidth, resHeight/3, hueBitmap.config)
+
+        var borderedHueBitmap = Bitmap.createBitmap(startImage.width+border, startImage.height/3+border/2, hueBitmap.config)
         val canvasHue = Canvas(borderedHueBitmap)
         canvasHue.drawColor(Color.WHITE)
-        canvasHue.drawBitmap(hueBitmap, (border/2).toFloat(), (border/2).toFloat(), null)
+        canvasHue.drawBitmap(hueBitmap, (border/2).toFloat(), 0f, null)
 
 
-        var borderedPhotoBitmap = Bitmap.createBitmap(resWidth, resHeight, startImage.config)
+        var borderedPhotoBitmap = Bitmap.createBitmap(startImage.width+border, startImage.height+border, startImage.config)
         val canvas = Canvas(borderedPhotoBitmap)
 
         canvas.drawColor(Color.WHITE)
-        startImage = Bitmap.createScaledBitmap(startImage, resWidth-border, resHeight-border, false)
         canvas.drawBitmap(startImage, (border/2).toFloat(), (border/2).toFloat(), null)
-
 
         borderedPhotoBitmap = appendDownBitmaps(borderedPhotoBitmap, borderedHueBitmap)
 

@@ -60,6 +60,8 @@ class CameraActivity : AppCompatActivity() {
         auth = Firebase.auth
         storage = Firebase.storage
 
+        /* Forzare la rotazione dello schermo in landscape */
+
         setContent {
             ToneTheme {
                 ToneTheme {
