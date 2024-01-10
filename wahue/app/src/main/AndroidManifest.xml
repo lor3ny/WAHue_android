@@ -26,6 +26,10 @@
         <activity
             android:name=".HomepageActivity"
             android:exported="false"
+            android:theme="@style/Theme.Tone" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false"
             android:label="@string/title_activity_login"
             android:theme="@style/Theme.Tone" />
         <activity
@@ -33,7 +37,7 @@
             android:screenOrientation="landscape"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".LogoActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Tone">

@@ -108,4 +108,5 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.github.bumptech.glide:glide:4.14.2")
     implementation("androidx.palette:palette-ktx:1.0.0")
+    implementation("com.google.android.material:material:1.11.0")
 }

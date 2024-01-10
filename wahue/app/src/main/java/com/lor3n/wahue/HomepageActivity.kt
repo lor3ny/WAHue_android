@@ -11,9 +11,11 @@ import com.lor3n.wahue.ui.theme.ToneTheme
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,7 +23,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -74,13 +80,14 @@ class HomepageActivity : ComponentActivity() {
             imageUrls.addAll(fetchedImageUrls)
         }
 
+        enableEdgeToEdge()
         setContent {
             ToneTheme {
-
                 Surface (
                     modifier = Modifier
-                        .background(color = Color.White)
-                        .fillMaxSize()
+                        .fillMaxSize(),
+                    color = Color(0xFFF2F2F2)
+
                 ){
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -127,31 +134,30 @@ class HomepageActivity : ComponentActivity() {
                                 .padding(16.dp)
                                 .align(Alignment.CenterHorizontally)
                         )
-                        LazyVerticalStaggeredGrid(
-                            columns = StaggeredGridCells.Fixed(2),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalItemSpacing = 16.dp,
-                            contentPadding = PaddingValues(16.dp),
-                            modifier = Modifier
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2), // Number of columns
+                            contentPadding = PaddingValues(8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ){
                             items(imageUrls){ url ->
-                                Image(
-                                    painter = // You can add more customization options here
-                                    rememberAsyncImagePainter(
-                                        ImageRequest.Builder(LocalContext.current).data(data = url)
-                                            .apply(block = fun ImageRequest.Builder.() {
-                                                // You can add more customization options here
-                                                //error(Color.Red)
-                                            }).build()
-                                    ),
-                                    contentDescription = null,
+                                Box(
                                     modifier = Modifier
-                                        .height(200.dp).wrapContentHeight()
-                                        .clip(RoundedCornerShape(10.dp))
-                                        .fillMaxWidth()
-                                        .shadow(2.dp),
-                                    contentScale = ContentScale.Fit
-                                )
+                                        .padding(2.dp)
+                                ){
+                                    Image(
+                                        painter = // You can add more customization options here
+                                        rememberAsyncImagePainter(
+                                            ImageRequest.Builder(LocalContext.current).data(data = url)
+                                                .apply(block = fun ImageRequest.Builder.() {
+                                                }).build()
+                                        ),
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .size(200.dp)
+                                    )
+                                }
+
                             }
                         }
                     }

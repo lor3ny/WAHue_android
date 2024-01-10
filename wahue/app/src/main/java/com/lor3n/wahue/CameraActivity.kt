@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -60,8 +61,7 @@ class CameraActivity : AppCompatActivity() {
         auth = Firebase.auth
         storage = Firebase.storage
 
-        /* Forzare la rotazione dello schermo in landscape */
-
+        enableEdgeToEdge()
         setContent {
             ToneTheme {
                 ToneTheme {
