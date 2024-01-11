@@ -12,13 +12,18 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cameraswitch
 import androidx.compose.material.icons.filled.Photo
@@ -35,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -82,33 +88,11 @@ class CameraActivity : AppCompatActivity() {
                             modifier = Modifier
                                 .fillMaxSize()
                         )
-
-                        IconButton(
-                            onClick = {
-                                controller.cameraSelector =
-                                    if (controller.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
-                                        CameraSelector.DEFAULT_FRONT_CAMERA
-                                    } else {
-                                        CameraSelector.DEFAULT_BACK_CAMERA
-                                    }
-                            },
+                        Column(
                             modifier = Modifier
-                                .offset(16.dp, 16.dp)
+                                .align(Alignment.CenterEnd)
+
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Cameraswitch,
-                                contentDescription = "Switch camera"
-                            )
-                        }
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .align(Alignment.BottomCenter)
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceAround
-                        )
-                        {
                             IconButton(
                                 onClick = {
                                     takePhoto(
@@ -116,12 +100,39 @@ class CameraActivity : AppCompatActivity() {
                                     )
                                 },
                                 modifier = Modifier
+                                    .wrapContentSize()
+                                    .size(50.dp)
+                                    .padding(end = 20.dp)
+                                    .background(Color(0xFFE03C42), shape = CircleShape)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.PhotoCamera,
                                     contentDescription = "Take Photo"
                                 )
                             }
+                            IconButton(
+                                onClick = {
+                                    controller.cameraSelector =
+                                        if (controller.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
+                                            CameraSelector.DEFAULT_FRONT_CAMERA
+                                        } else {
+                                            CameraSelector.DEFAULT_BACK_CAMERA
+                                        }
+                                },
+                                modifier = Modifier
+                                    .wrapContentSize()
+                                    .size(50.dp)
+                                    .padding(
+                                        top = 30.dp,
+                                        end = 20.dp)
+                                    .background(Color(0x55000000), shape = CircleShape)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Cameraswitch,
+                                    contentDescription = "Switch camera",
+                                )
+                            }
+
                         }
                     }
                 }

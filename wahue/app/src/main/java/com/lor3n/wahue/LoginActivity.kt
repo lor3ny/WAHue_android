@@ -13,12 +13,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Key
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -81,6 +84,7 @@ class LoginActivity : ComponentActivity() {
     }
     */
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun LoginPage() {
         var emailInput by remember { mutableStateOf("") }
@@ -107,6 +111,11 @@ class LoginActivity : ComponentActivity() {
                 label = { Text(text = "Email") },
                 placeholder = { Text(text = "Enter your e-mail") },
                 modifier = Modifier.padding(5.dp)
+                    .size(width = 280.dp, height = 65.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black
+                )
             )
             OutlinedTextField(
                 value = passwordInput,
@@ -118,6 +127,12 @@ class LoginActivity : ComponentActivity() {
                 label = { Text(text = "Password") },
                 placeholder = { Text(text = "Enter your Password") },
                 modifier = Modifier.padding(5.dp)
+                    .size(width = 280.dp, height = 65.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black
+                )
+
             )
             Row(){
                 OutlinedButton(
