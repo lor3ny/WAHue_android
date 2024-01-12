@@ -75,18 +75,23 @@ class LogoActivity : ComponentActivity() {
                     contentDescription = "Random Image",
                 )
             }
-            Row(){
+            Row() {
                 OutlinedButton(
                     onClick = { goToLogin() },
                     Modifier.padding(10.dp)
-                ){
-                    Text("Log In")
+                ) {
+                    Text("Login")
                 }
+            }
+            Row(
+                modifier = Modifier
+                    .align(//In basso)
+            ){
                 FilledTonalButton(
                     onClick = { goToSignin() },
                     Modifier.padding(10.dp)
                 ){
-                    Text("Sign In")
+                    Text("Join!")
                 }
             }
 
