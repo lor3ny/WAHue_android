@@ -34,10 +34,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,6 +53,9 @@ import com.google.firebase.auth.auth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.storage
 import com.lor3n.wahue.ui.theme.ToneTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import kotlin.random.Random
@@ -69,76 +75,102 @@ class CameraActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
         setContent {
+            var showWhiteScreen by remember { mutableStateOf(false) }
+
             ToneTheme {
-                ToneTheme {
-                    val controller = remember{
-                        LifecycleCameraController(applicationContext).apply {
-                            setEnabledUseCases(
-                                CameraController.IMAGE_CAPTURE
-                            )
-                        }
-                    }
-
-                    Box (
-                        modifier = Modifier
-                            .fillMaxSize()
-                    ) {
-                        CameraPreview(
-                            controller = controller,
-                            modifier = Modifier
-                                .fillMaxSize()
-                        )
-                        Column(
-                            modifier = Modifier
-                                .align(Alignment.CenterEnd)
-
-                        ) {
-                            IconButton(
-                                onClick = {
-                                    takePhoto(
-                                        controller = controller
-                                    )
-                                },
-                                modifier = Modifier
-                                    .wrapContentSize()
-                                    .size(50.dp)
-                                    .padding(end = 20.dp)
-                                    .background(Color(0xFFE03C42), shape = CircleShape)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.PhotoCamera,
-                                    contentDescription = "Take Photo"
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-                                    controller.cameraSelector =
-                                        if (controller.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
-                                            CameraSelector.DEFAULT_FRONT_CAMERA
-                                        } else {
-                                            CameraSelector.DEFAULT_BACK_CAMERA
-                                        }
-                                },
-                                modifier = Modifier
-                                    .wrapContentSize()
-                                    .size(50.dp)
-                                    .padding(
-                                        top = 30.dp,
-                                        end = 20.dp)
-                                    .background(Color(0x55000000), shape = CircleShape)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Cameraswitch,
-                                    contentDescription = "Switch camera",
-                                )
-                            }
-
-                        }
-                    }
+                if(!showWhiteScreen){
+                    CameraLayout(onBack = { showWhiteScreen = true })
+                } else {
+                    CheckLayout(onBack = {showWhiteScreen = false})
                 }
             }
         }
     }
+
+
+    @Composable
+    private fun CameraLayout(onBack: () -> Unit){
+        val controller = remember{
+            LifecycleCameraController(applicationContext).apply {
+                setEnabledUseCases(
+                    CameraController.IMAGE_CAPTURE
+                )
+            }
+        }
+
+        Box (
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            CameraPreview(
+                controller = controller,
+                modifier = Modifier
+                    .fillMaxSize()
+            )
+            Column(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+
+            ) {
+                IconButton(
+                    onClick = {
+                        takePhoto(
+                            controller = controller
+                        )
+                        onBack()
+                    },
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .size(50.dp)
+                        .padding(end = 20.dp)
+                        .background(Color(0xFFE03C42), shape = CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.PhotoCamera,
+                        contentDescription = "Take Photo"
+                    )
+                }
+                IconButton(
+                    onClick = {
+                        controller.cameraSelector =
+                            if (controller.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
+                                CameraSelector.DEFAULT_FRONT_CAMERA
+                            } else {
+                                CameraSelector.DEFAULT_BACK_CAMERA
+                            }
+                    },
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .size(50.dp)
+                        .padding(
+                            top = 30.dp,
+                            end = 20.dp
+                        )
+                        .background(Color(0x55000000), shape = CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Cameraswitch,
+                        contentDescription = "Switch camera",
+                    )
+                }
+
+            }
+        }
+    }
+
+    @Composable
+    private fun CheckLayout(onBack: () -> Unit){
+        Box (
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+        )
+        LaunchedEffect(Unit) {
+            delay(500) // Delay for 2 seconds
+            onBack()
+        }
+    }
+
 
     private fun takePhoto(
         controller: LifecycleCameraController,
@@ -156,6 +188,8 @@ class CameraActivity : AppCompatActivity() {
 
                     hue.getHueImage()!!.compress(Bitmap.CompressFormat.PNG, 100, byteStream)
                     val data = byteStream.toByteArray()
+
+
 
                     val ranInt: Int = (0..1000).random()
                     val imagesRef = storage.reference.child("${auth.currentUser?.uid}/images/image_"+ranInt.toString()+".png")
