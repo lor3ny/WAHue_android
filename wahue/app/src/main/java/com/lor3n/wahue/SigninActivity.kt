@@ -10,7 +10,9 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -18,6 +20,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Key
+import androidx.compose.material3.Divider
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -73,42 +77,25 @@ class SigninActivity : ComponentActivity() {
         var verPasswordInput by remember { mutableStateOf("") }
         var resultText by remember { mutableStateOf("") }
 
+        var nameInput by remember { mutableStateOf("") }
+        var surnameInput by remember { mutableStateOf("") }
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Top,
             modifier = Modifier.verticalScroll(rememberScrollState())
         ){
+            Spacer(modifier = Modifier.height(50.dp))
             Text(
-                text = "A newcomer!",
-                style = MaterialTheme.typography.headlineMedium
+                text = "Join the family!",
+                color = Color.Black,
+                style = MaterialTheme.typography.titleLarge
             )
             Text(
                 text = resultText,
                 color = Color.Red,
                 style = MaterialTheme.typography.bodySmall
             )
-            Row(){
-                OutlinedButton(
-                    onClick = {
-                        auth.createUserWithEmailAndPassword(emailInput, passwordInput)
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    goToHomepage()
-                                } else {
-                                    val exception = task.exception
-                                    if (exception != null) {
-                                        // Handle specific exceptions here if needed
-                                        val errorMessage = exception.message ?: "Unknown error occurred"
-                                        resultText = errorMessage
-                                    }
-                                }
-                            }
-                    },
-                    Modifier.padding(10.dp)
-                ){
-                    Text("Sign In")
-                }
-            }
             OutlinedTextField(
                 value = emailInput,
                 leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = "emailIcon") },
@@ -147,6 +134,58 @@ class SigninActivity : ComponentActivity() {
                 placeholder = { Text(text = "Enter your Password") },
                 modifier = Modifier.padding(5.dp)
             )
+            Divider(
+                color = Color.Gray,
+                thickness = 1.dp, // You can adjust the thickness of the line as needed
+                modifier = Modifier.padding(
+                    vertical = 10.dp,
+                    horizontal = 80.dp)
+
+            )
+            OutlinedTextField(
+                value = nameInput,
+                //leadingIcon = { Icon(imageVector = Icons.Default.Check, contentDescription = "emailIcon") },
+                //trailingIcon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
+                onValueChange = {
+                    nameInput = it
+                },
+                label = { Text(text = "First Name") },
+                placeholder = { Text(text = "Enter your Name") },
+                modifier = Modifier.padding(5.dp)
+            )
+            OutlinedTextField(
+                value = surnameInput,
+                //leadingIcon = { Icon(imageVector = Icons.Default., contentDescription = "emailIcon") },
+                //trailingIcon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
+                onValueChange = {
+                    surnameInput = it
+                },
+                label = { Text(text = "Surname") },
+                placeholder = { Text(text = "Enter your Surname") },
+                modifier = Modifier.padding(5.dp)
+            )
+            Row(){
+                FilledTonalButton(
+                    onClick = {
+                        auth.createUserWithEmailAndPassword(emailInput, passwordInput)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    goToHomepage()
+                                } else {
+                                    val exception = task.exception
+                                    if (exception != null) {
+                                        // Handle specific exceptions here if needed
+                                        val errorMessage = exception.message ?: "Unknown error occurred"
+                                        resultText = errorMessage
+                                    }
+                                }
+                            }
+                    },
+                    Modifier.padding(10.dp)
+                ){
+                    Text("Sign In")
+                }
+            }
         }
     }
 

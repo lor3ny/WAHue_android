@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Divider
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -29,6 +31,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -61,40 +64,57 @@ class LogoActivity : ComponentActivity() {
         var indexImage = Random.nextInt(imageArray.size)
         var imageResource by remember { mutableStateOf(imageArray[indexImage]) }
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.verticalScroll(rememberScrollState())
-        ){
-            Box(modifier = Modifier
-                .padding(16.dp)
-                .shadow(10.dp)
-            ) { // 16.dp margin
-                Image(
-                    painter = painterResource(id = imageResource),
-                    contentDescription = "Random Image",
-                )
-            }
-            Row() {
-                OutlinedButton(
-                    onClick = { goToLogin() },
-                    Modifier.padding(10.dp)
-                ) {
-                    Text("Login")
-                }
-            }
-            Row(
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
                 modifier = Modifier
-                    .align(//In basso)
-            ){
-                FilledTonalButton(
-                    onClick = { goToSignin() },
-                    Modifier.padding(10.dp)
-                ){
-                    Text("Join!")
+                    .matchParentSize()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Box(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .shadow(10.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = imageResource),
+                        contentDescription = "Random Image"
+                    )
+                }
+                Row() {
+                    FilledTonalButton(
+                        onClick = {goToLogin()},
+                        Modifier.padding(10.dp)
+                    ) {
+                        Text("Login")
+                    }
                 }
             }
 
+            // Join! button at the bottom
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Divider(
+                    color = Color.Gray,
+                    thickness = 1.dp, // You can adjust the thickness of the line as needed
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+                Text(
+                    text = "Don't you have an account?",
+                    fontSize = 12.sp,
+                    color = Color.Gray
+                )
+                OutlinedButton(
+                    onClick = {goToSignin()},
+                ) {
+                    Text("Join!")
+                }
+            }
         }
 
     }

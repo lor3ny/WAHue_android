@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Key
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -45,6 +46,7 @@ import androidx.compose.ui.semantics.Role.Companion.Button
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.google.firebase.Firebase
 import com.lor3n.wahue.ui.theme.ToneTheme
@@ -91,51 +93,59 @@ class LoginActivity : ComponentActivity() {
         var passwordInput by remember { mutableStateOf("") }
         var resultText by remember { mutableStateOf("") }
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.verticalScroll(rememberScrollState())
-        ){
-            Text(
-                text = resultText,
-                color = Color.Red,
-                style = MaterialTheme.typography.bodySmall
-            )
-            OutlinedTextField(
-                value = emailInput,
-                leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = "emailIcon") },
-                //trailingIcon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
-                onValueChange = {
-                    emailInput = it
-                },
-                label = { Text(text = "Email") },
-                placeholder = { Text(text = "Enter your e-mail") },
-                modifier = Modifier.padding(5.dp)
-                    .size(width = 280.dp, height = 65.dp),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black
-                )
-            )
-            OutlinedTextField(
-                value = passwordInput,
-                leadingIcon = { Icon(imageVector = Icons.Default.Key, contentDescription = "emailIcon") },
-                //trailingIcon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
-                onValueChange = {
-                    passwordInput = it
-                },
-                label = { Text(text = "Password") },
-                placeholder = { Text(text = "Enter your Password") },
-                modifier = Modifier.padding(5.dp)
-                    .size(width = 280.dp, height = 65.dp),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black
-                )
+        Box(modifier = Modifier.fillMaxSize()){
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
 
-            )
-            Row(){
-                OutlinedButton(
+            ){
+                Text(
+                    text = "Hi!",
+                    color = Color.Black,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text(
+                    text = resultText,
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodySmall
+                )
+                OutlinedTextField(
+                    value = emailInput,
+                    leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = "emailIcon") },
+                    //trailingIcon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
+                    onValueChange = {
+                        emailInput = it
+                    },
+                    label = { Text(text = "Email") },
+                    placeholder = { Text(text = "Enter your e-mail") },
+                    modifier = Modifier.padding(5.dp)
+                        .size(width = 280.dp, height = 65.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black
+                    )
+                )
+                OutlinedTextField(
+                    value = passwordInput,
+                    leadingIcon = { Icon(imageVector = Icons.Default.Key, contentDescription = "emailIcon") },
+                    //trailingIcon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
+                    onValueChange = {
+                        passwordInput = it
+                    },
+                    label = { Text(text = "Password") },
+                    placeholder = { Text(text = "Enter your Password") },
+                    modifier = Modifier.padding(5.dp)
+                        .size(width = 280.dp, height = 65.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black
+                    )
+
+                )
+                FilledTonalButton(
                     onClick = {
                         auth.signInWithEmailAndPassword(emailInput, passwordInput)
                             .addOnCompleteListener { task ->
@@ -155,11 +165,28 @@ class LoginActivity : ComponentActivity() {
                 ){
                     Text("Log In")
                 }
-                FilledTonalButton(
-                    onClick = { goToSignIn() },
-                    Modifier.padding(10.dp)
-                ){
-                    Text("Sign In")
+            }
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Divider(
+                    color = Color.Gray,
+                    thickness = 1.dp, // You can adjust the thickness of the line as needed
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+                Text(
+                    text = "Don't you have an account?",
+                    fontSize = 12.sp,
+                    color = Color.Gray
+                )
+                OutlinedButton(
+                    onClick = {goToSignIn()},
+                ) {
+                    Text("Join!")
                 }
             }
         }
