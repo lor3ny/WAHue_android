@@ -15,9 +15,6 @@ class HueBuilder constructor(image: Bitmap)
 
     public fun BuildHue(){
 
-        startImage = Bitmap.createScaledBitmap(startImage, startImage.width/3, startImage.height/3, true);
-
-
         val palette = Palette.from(startImage).generate()
         val dominantColorsBitmaps = mutableListOf<Bitmap>()
 
@@ -29,8 +26,7 @@ class HueBuilder constructor(image: Bitmap)
         for (i in 0 until numColorsToExtract) {
             val color = swatches[i].rgb
 
-            var hueWidth: Int = (startImage.width)/numColorsToExtract
-            val colBitmap = Bitmap.createBitmap(hueWidth, startImage.height/3 , Bitmap.Config.ARGB_8888)
+            val colBitmap = Bitmap.createBitmap(100, 150 , Bitmap.Config.ARGB_8888)
             val canvas = Canvas(colBitmap)
             canvas.drawColor(color)
             dominantColorsBitmaps.add(colBitmap)
@@ -45,22 +41,7 @@ class HueBuilder constructor(image: Bitmap)
             hueBitmap = appendRightBitmaps(hueBitmap,bitmap)
         }
 
-
-        var borderedHueBitmap = Bitmap.createBitmap(startImage.width+border, startImage.height/3+border/2, hueBitmap.config)
-        val canvasHue = Canvas(borderedHueBitmap)
-        canvasHue.drawColor(Color.WHITE)
-        canvasHue.drawBitmap(hueBitmap, (border/2).toFloat(), 0f, null)
-
-
-        var borderedPhotoBitmap = Bitmap.createBitmap(startImage.width+border, startImage.height+border, startImage.config)
-        val canvas = Canvas(borderedPhotoBitmap)
-
-        canvas.drawColor(Color.WHITE)
-        canvas.drawBitmap(startImage, (border/2).toFloat(), (border/2).toFloat(), null)
-
-        borderedPhotoBitmap = appendDownBitmaps(borderedPhotoBitmap, borderedHueBitmap)
-
-        hueImage = borderedPhotoBitmap
+        hueImage = hueBitmap
     }
 
     public fun getHueImage(): Bitmap?{
@@ -77,20 +58,6 @@ class HueBuilder constructor(image: Bitmap)
 
         canvas.drawBitmap(firstBitmap, 0f, 0f, null)
         canvas.drawBitmap(secondBitmap, firstBitmap.width.toFloat(), 0f, null)
-
-        return resultBitmap
-    }
-
-    private fun appendDownBitmaps(firstBitmap: Bitmap, secondBitmap: Bitmap): Bitmap {
-
-        val resultWidth = firstBitmap.width.coerceAtLeast(secondBitmap.width)
-        val resultHeight = firstBitmap.height + secondBitmap.height
-
-        val resultBitmap = Bitmap.createBitmap(resultWidth, resultHeight, firstBitmap.config)
-        val canvas = Canvas(resultBitmap)
-
-        canvas.drawBitmap(firstBitmap, 0f, 0f, null)
-        canvas.drawBitmap(secondBitmap, 0f, firstBitmap.height.toFloat(), null)
 
         return resultBitmap
     }

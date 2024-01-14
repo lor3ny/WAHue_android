@@ -39,11 +39,17 @@ import com.lor3n.wahue.ui.theme.ToneTheme
 import kotlin.random.Random
 
 class LogoActivity : ComponentActivity() {
+
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             ToneTheme {
+
+                auth = Firebase.auth
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = Color(0xFFF2F2F2)
@@ -84,7 +90,13 @@ class LogoActivity : ComponentActivity() {
                 }
                 Row() {
                     FilledTonalButton(
-                        onClick = {goToLogin()},
+                        onClick = {
+                            if (auth.currentUser != null) {
+                                goToHomepage()
+                            } else {
+                                goToLogin()
+                            }
+                      },
                         Modifier.padding(10.dp)
                     ) {
                         Text("Login")
@@ -119,6 +131,10 @@ class LogoActivity : ComponentActivity() {
 
     }
 
+    private fun goToHomepage(): Unit{
+        val intent = Intent(this@LogoActivity, HomepageActivity::class.java)
+        startActivity(intent)
+    }
 
     private fun goToSignin(): Unit{
         val intent = Intent(this@LogoActivity, SigninActivity::class.java)

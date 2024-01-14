@@ -45,8 +45,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.auth
 import com.lor3n.wahue.ui.theme.ToneTheme
 
@@ -80,7 +83,6 @@ class SigninActivity : ComponentActivity() {
         var resultText by remember { mutableStateOf("") }
 
         var nameInput by remember { mutableStateOf("") }
-        var surnameInput by remember { mutableStateOf("") }
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -155,24 +157,13 @@ class SigninActivity : ComponentActivity() {
                 placeholder = { Text(text = "Enter your Name") },
                 modifier = Modifier.padding(5.dp)
             )
-            OutlinedTextField(
-                value = surnameInput,
-                //leadingIcon = { Icon(imageVector = Icons.Default., contentDescription = "emailIcon") },
-                //trailingIcon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
-                onValueChange = {
-                    surnameInput = it
-                },
-                label = { Text(text = "Surname") },
-                placeholder = { Text(text = "Enter your Surname") },
-                modifier = Modifier.padding(5.dp)
-            )
             Row(){
                 FilledTonalButton(
                     onClick = {
                         auth.createUserWithEmailAndPassword(emailInput, passwordInput)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
-                                    goToHomepage()
+                                    updateUserProfile(auth.currentUser!!, nameInput)
                                 } else {
                                     val exception = task.exception
                                     if (exception != null) {
@@ -200,11 +191,17 @@ class SigninActivity : ComponentActivity() {
         return false
     }
 
-    @Preview(showBackground = true)
-    @Composable
-    fun GreetingPreview() {
-        ToneTheme {
-            Signin()
-        }
+    private fun updateUserProfile(user: FirebaseUser, displayName: String?){
+        val profileUpdates = UserProfileChangeRequest.Builder()
+            .setDisplayName(displayName)
+            .build()
+        user.updateProfile(profileUpdates)
+            .addOnCompleteListener { task: Task<Void?> ->
+                if (task.isSuccessful) {
+                    goToHomepage()
+                } else {
+                    //Bho
+                }
+            }
     }
 }
