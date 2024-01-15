@@ -9,12 +9,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Divider
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedButton
@@ -80,27 +82,38 @@ class LogoActivity : ComponentActivity() {
             ) {
                 Box(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .shadow(10.dp)
+                        .padding(
+                            horizontal = 20.dp,
+                            vertical = 10.dp)
+                        .shadow(5.dp)
                 ) {
                     Image(
                         painter = painterResource(id = imageResource),
                         contentDescription = "Random Image"
                     )
                 }
-                Row() {
-                    FilledTonalButton(
-                        onClick = {
-                            if (auth.currentUser != null) {
-                                goToHomepage()
-                            } else {
-                                goToLogin()
-                            }
-                      },
-                        Modifier.padding(10.dp)
-                    ) {
-                        Text("Login")
-                    }
+                FilledTonalButton(
+                    onClick = {
+                        if (auth.currentUser != null) {
+                            goToHomepage()
+                        } else {
+                            goToLogin()
+                        }
+                    },
+                    modifier = Modifier
+                        .padding(
+                            horizontal = 20.dp,
+                            vertical = 10.dp
+                        )
+                        .fillMaxSize(),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 5.dp,  // Default elevation
+                        pressedElevation = 10.dp,  // Elevation when the button is pressed
+                        disabledElevation = 0.dp  // Elevation when the button is disabled
+                    ),
+                    //shape = RoundedCornerShape(2.dp)
+                ) {
+                    Text("Login")
                 }
             }
 
@@ -108,8 +121,11 @@ class LogoActivity : ComponentActivity() {
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(
+                        horizontal = 20.dp,
+                        vertical = 20.dp
+                    ),
+                    horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Divider(
                     color = Color.Gray,
@@ -123,6 +139,8 @@ class LogoActivity : ComponentActivity() {
                 )
                 OutlinedButton(
                     onClick = {goToSignin()},
+                    modifier = Modifier
+                        .fillMaxWidth(),
                 ) {
                     Text("Join!")
                 }

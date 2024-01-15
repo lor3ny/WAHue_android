@@ -9,13 +9,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Key
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -34,6 +37,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -112,12 +118,15 @@ class LoginActivity : ComponentActivity() {
                     label = { Text(text = "Email") },
                     placeholder = { Text(text = "Enter your e-mail") },
                     modifier = Modifier
-                        .padding(5.dp)
-                        .size(width = 280.dp, height = 65.dp),
+                        .padding(
+                            horizontal = 20.dp,
+                            vertical = 5.dp)
+                        .fillMaxWidth(),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedTextColor = Color.Black,
                         unfocusedTextColor = Color.Black
-                    )
+                    ),
+                    singleLine = true,
                 )
                 OutlinedTextField(
                     value = passwordInput,
@@ -129,12 +138,17 @@ class LoginActivity : ComponentActivity() {
                     label = { Text(text = "Password") },
                     placeholder = { Text(text = "Enter your Password") },
                     modifier = Modifier
-                        .padding(5.dp)
-                        .size(width = 280.dp, height = 65.dp),
+                        .padding(
+                            horizontal = 20.dp,
+                            vertical = 5.dp)
+                        .fillMaxWidth(),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedTextColor = Color.Black,
                         unfocusedTextColor = Color.Black
-                    )
+                    ),
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
 
                 )
                 FilledTonalButton(
@@ -153,7 +167,17 @@ class LoginActivity : ComponentActivity() {
                                 }
                             }
                     },
-                    Modifier.padding(10.dp)
+                    modifier = Modifier
+                        .padding(
+                            horizontal = 20.dp,
+                            vertical = 10.dp
+                        )
+                        .fillMaxSize(),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 5.dp,  // Default elevation
+                        pressedElevation = 10.dp,  // Elevation when the button is pressed
+                        disabledElevation = 0.dp  // Elevation when the button is disabled
+                    ),
                 ){
                     Text("Log In")
                 }
@@ -177,6 +201,12 @@ class LoginActivity : ComponentActivity() {
                 )
                 OutlinedButton(
                     onClick = {goToSignIn()},
+                    modifier = Modifier
+                        .padding(
+                            horizontal = 20.dp,
+                            vertical = 10.dp
+                        )
+                        .fillMaxWidth(),
                 ) {
                     Text("Join!")
                 }
