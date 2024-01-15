@@ -113,7 +113,7 @@ class LogoActivity : ComponentActivity() {
                     ),
                     //shape = RoundedCornerShape(2.dp)
                 ) {
-                    Text("Login")
+                    Text("Log In")
                 }
             }
 

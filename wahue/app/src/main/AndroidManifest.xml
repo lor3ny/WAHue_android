@@ -38,6 +38,7 @@
             android:theme="@style/Theme.Tone" />
         <activity
             android:name=".CameraActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".LogoActivity"
