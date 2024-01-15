@@ -87,6 +87,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -207,17 +208,25 @@ class HomepageActivity : ComponentActivity() {
 
 
         ) {
-            Column (
-                horizontalAlignment = Alignment.Start
-            ){
-                Spacer(modifier = Modifier.height(50.dp))
-                Row(
+            Column {
+                Spacer(modifier = Modifier.height(30.dp))
+                OutlinedButton(
+                    onClick = {
+                        auth.signOut()
+                        val intent = Intent(this@HomepageActivity, LoginActivity::class.java)
+                        startActivity(intent)
+                    },
                     modifier = Modifier
-                        .padding(
-                            horizontal = 20.dp,
-                        )
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.Bottom
+                        .align(Alignment.Start)
+                        .padding(20.dp)
+                ) {
+                    Text("Sign Out")
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.Bottom,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
                 ){
                     Text(
                         text = "HUEs of",
@@ -228,18 +237,8 @@ class HomepageActivity : ComponentActivity() {
                         text = auth.currentUser?.displayName.toString(),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Light,
-                        modifier = Modifier.padding(horizontal = 2.dp)
+                        modifier = Modifier.padding(horizontal = 3.dp)
                     )
-                    TextButton(
-                        onClick = {
-                            auth.signOut()
-                            val intent = Intent(this@HomepageActivity, LoginActivity::class.java)
-                            startActivity(intent)
-                        },
-                        contentPadding = PaddingValues(0.dp )
-                    ) {
-                        Text("Sign Out")
-                    }
                 }
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3), // Number of columns
