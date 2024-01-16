@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -39,21 +39,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.auth
 import com.lor3n.wahue.ui.theme.ToneTheme
 
 class LoginActivity : ComponentActivity() {
 
     private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -106,7 +102,13 @@ class LoginActivity : ComponentActivity() {
                 Text(
                     text = resultText,
                     color = Color.Red,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier
+                            .padding(
+                                horizontal = 25.dp,
+                                vertical = 3.dp)
+                    .fillMaxWidth(),
+
                 )
                 OutlinedTextField(
                     value = emailInput,
@@ -153,19 +155,23 @@ class LoginActivity : ComponentActivity() {
                 )
                 FilledTonalButton(
                     onClick = {
-                        auth.signInWithEmailAndPassword(emailInput, passwordInput)
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    goToHomepage()
-                                } else {
-                                    val exception = task.exception
-                                    if (exception != null) {
-                                        // Handle specific exceptions here if needed
-                                        val errorMessage = exception.message ?: "Unknown error occurred"
-                                        resultText = errorMessage
+                        if(emailInput == "" || passwordInput == "") {
+                            resultText = "Email and password fields must be compiled"
+                        } else {
+                            auth.signInWithEmailAndPassword(emailInput, passwordInput)
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        goToHomepage()
+                                    } else {
+                                        val exception = task.exception
+                                        if (exception != null) {
+                                            // Handle specific exceptions here if needed
+                                            val errorMessage = exception.message ?: "Unknown error occurred"
+                                            resultText = errorMessage
+                                        }
                                     }
                                 }
-                            }
+                        }
                     },
                     modifier = Modifier
                         .padding(
@@ -178,6 +184,7 @@ class LoginActivity : ComponentActivity() {
                         pressedElevation = 10.dp,  // Elevation when the button is pressed
                         disabledElevation = 0.dp  // Elevation when the button is disabled
                     ),
+                    shape = RoundedCornerShape(15.dp)
                 ){
                     Text("Log In")
                 }
@@ -186,7 +193,10 @@ class LoginActivity : ComponentActivity() {
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(10.dp),
+                    .padding(
+                        horizontal = 20.dp,
+                        vertical = 60.dp
+                    ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Divider(
@@ -207,6 +217,7 @@ class LoginActivity : ComponentActivity() {
                             vertical = 10.dp
                         )
                         .fillMaxWidth(),
+                    shape = RoundedCornerShape(15.dp)
                 ) {
                     Text("Join!")
                 }

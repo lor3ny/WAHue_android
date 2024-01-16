@@ -16,7 +16,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Divider
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedButton
@@ -111,6 +110,7 @@ class LogoActivity : ComponentActivity() {
                         pressedElevation = 10.dp,  // Elevation when the button is pressed
                         disabledElevation = 0.dp  // Elevation when the button is disabled
                     ),
+                    shape = RoundedCornerShape(15.dp)
                     //shape = RoundedCornerShape(2.dp)
                 ) {
                     Text("Log In")
@@ -123,7 +123,7 @@ class LogoActivity : ComponentActivity() {
                     .align(Alignment.BottomCenter)
                     .padding(
                         horizontal = 20.dp,
-                        vertical = 20.dp
+                        vertical = 60.dp
                     ),
                     horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -141,6 +141,7 @@ class LogoActivity : ComponentActivity() {
                     onClick = {goToSignin()},
                     modifier = Modifier
                         .fillMaxWidth(),
+                    shape = RoundedCornerShape(15.dp)
                 ) {
                     Text("Join!")
                 }

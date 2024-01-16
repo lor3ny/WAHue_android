@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import com.lor3n.wahue.ui.theme.ToneTheme
@@ -19,7 +18,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Environment
-import android.provider.CalendarContract
 import android.provider.MediaStore
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
@@ -28,7 +26,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,42 +33,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Cached
-import androidx.compose.material.icons.filled.Cameraswitch
-import androidx.compose.material.icons.filled.ColorLens
 import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -80,32 +60,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import coil.compose.rememberAsyncImagePainter
 import com.google.firebase.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.storage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
-import coil.request.ImageRequest
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -117,7 +86,6 @@ class HomepageActivity : ComponentActivity() {
 
     private lateinit var storage: FirebaseStorage
     private lateinit var auth: FirebaseAuth
-    private lateinit var database: FirebaseFirestore
     private var ImagesAndHues = mutableStateListOf<ImageHue>()
     private var selectedImage: ImageHue? = null
 
@@ -133,7 +101,6 @@ class HomepageActivity : ComponentActivity() {
 
         auth = Firebase.auth
         storage = Firebase.storage
-        database = Firebase.firestore
         enableEdgeToEdge()
         setContent {
 
@@ -159,12 +126,12 @@ class HomepageActivity : ComponentActivity() {
         Scaffold(
             modifier = Modifier
                 .fillMaxSize(),
-            floatingActionButton = {
+            bottomBar = {
                 Row(
                     modifier = Modifier
                         .padding(
                             horizontal = 20.dp,
-                            vertical = 10.dp
+                            vertical = 60.dp
                         )
                         .fillMaxWidth(),
                 ){
@@ -181,6 +148,7 @@ class HomepageActivity : ComponentActivity() {
                             pressedElevation = 10.dp,  // Elevation when the button is pressed
                             disabledElevation = 0.dp  // Elevation when the button is disabled
                         ),
+                        shape = RoundedCornerShape(15.dp)
                     ) {
                         Text("Camera")
                     }
@@ -195,6 +163,7 @@ class HomepageActivity : ComponentActivity() {
                             pressedElevation = 10.dp,  // Elevation when the button is pressed
                             disabledElevation = 0.dp  // Elevation when the button is disabled
                         ),
+                        shape = RoundedCornerShape(15.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Cached,
@@ -203,7 +172,6 @@ class HomepageActivity : ComponentActivity() {
                     }
                 }
             },
-            floatingActionButtonPosition = FabPosition.Center, // Position can be changed
             containerColor = Color(0xFFF2F2F2)
 
 
@@ -218,7 +186,8 @@ class HomepageActivity : ComponentActivity() {
                     },
                     modifier = Modifier
                         .align(Alignment.Start)
-                        .padding(20.dp)
+                        .padding(20.dp),
+                    shape = RoundedCornerShape(15.dp)
                 ) {
                     Text("Sign Out")
                 }
@@ -226,7 +195,9 @@ class HomepageActivity : ComponentActivity() {
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.Bottom,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .fillMaxWidth()
                 ){
                     Text(
                         text = "HUEs of",
@@ -291,7 +262,8 @@ class HomepageActivity : ComponentActivity() {
                     .padding(
                         vertical = 50.dp,
                         horizontal = 20.dp
-                    )
+                    ),
+                    shape = RoundedCornerShape(15.dp)
                 )
                 {
                     Icon(
@@ -306,7 +278,7 @@ class HomepageActivity : ComponentActivity() {
                     modifier = Modifier
                         .padding(
                             horizontal = 15.dp,
-                            vertical = 40.dp
+                            vertical = 60.dp,
                         )
                 ){
                     Button (
@@ -329,11 +301,13 @@ class HomepageActivity : ComponentActivity() {
                             pressedElevation = 10.dp,  // Elevation when the button is pressed
                             disabledElevation = 0.dp  // Elevation when the button is disabled
                         ),
+                        shape = RoundedCornerShape(15.dp, 0.dp, 0.dp, 15.dp)
                     )
                     {
+                        Text(text = "Hue")
                         Icon(
-                            imageVector = Icons.Default.ColorLens,
-                            contentDescription = null,
+                            imageVector = Icons.Default.Download,
+                            contentDescription = "Switch camera",
                         )
                     }
                     Button(
@@ -351,22 +325,65 @@ class HomepageActivity : ComponentActivity() {
                         },
                         modifier = Modifier
                             .weight(1f)
+                            .padding(
+                                horizontal = 1.dp,
+                                vertical = 5.dp
+                            ),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 5.dp,  // Default elevation
+                            pressedElevation = 10.dp,  // Elevation when the button is pressed
+                            disabledElevation = 0.dp  // Elevation when the button is disabled
+                        ),
+                        shape = RoundedCornerShape(0.dp, 15.dp, 15.dp, 0.dp)
+                    )
+                    {
+                        Text(text = "Image")
+                        Icon(
+                            imageVector = Icons.Default.Download,
+                            contentDescription = "Switch camera",
+                        )
+                    }
+                    Button(
+                        onClick = {
+                            val imageRef = storage.reference.child("${auth.currentUser!!.uid}/images/image_${selectedImage!!.code}.jpeg")
+
+                            imageRef.delete().addOnSuccessListener {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = "Image Deleted from Cloud",
+                                        duration = SnackbarDuration.Short,
+                                    )
+                                }
+                                onBack()
+                                UpdateImages()
+                            }.addOnFailureListener {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = "Error Cloud Communication",
+                                        duration = SnackbarDuration.Short,
+                                    )
+                                }
+                            }
+                        },
+                        modifier = Modifier
                             .padding(5.dp),
                         elevation = ButtonDefaults.buttonElevation(
                             defaultElevation = 5.dp,  // Default elevation
                             pressedElevation = 10.dp,  // Elevation when the button is pressed
                             disabledElevation = 0.dp  // Elevation when the button is disabled
                         ),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFC43400),
+                            contentColor = Color(0xFFF2F2F2)
+                        ),
+                        contentPadding = PaddingValues(2.dp),
+                        shape = RoundedCornerShape(15.dp)
                     )
                     {
-                        Icon(
-                            imageVector = Icons.Default.Download,
-                            contentDescription = null,
-                        )
+                        Text(text = "Delete")
                     }
                 }
             },
-
             content = {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -402,8 +419,12 @@ class HomepageActivity : ComponentActivity() {
                                         .fillMaxWidth()
                                         .background(Color(color.toLong(16)))
                                         .clickable {
-                                            val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                            val clipData = ClipData.newPlainText("Copied Text", "#${color.substring(2)}")
+                                            val clipboardManager =
+                                                getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                            val clipData = ClipData.newPlainText(
+                                                "Copied Text",
+                                                "#${color.substring(2)}"
+                                            )
                                             clipboardManager.setPrimaryClip(clipData)
                                         }
                                 )
@@ -427,7 +448,6 @@ class HomepageActivity : ComponentActivity() {
 
         try {
             val imagesListRefs = imagesRef.listAll().await()
-            val huesListRefs = huesRef.listAll().await()
             imagesListRefs.items.forEach { imageRef ->
 
                 val imageBytes = imageRef.getBytes(Long.MAX_VALUE).await()

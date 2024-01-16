@@ -66,8 +66,8 @@ fun ToneTheme(
                 WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !dynamicColor
             } else {
                 val window = (view.context as Activity).window
-                window.statusBarColor = Color(0xFFF2F2F2).toArgb()
-                window.navigationBarColor = Color(0xFFF2F2F2).toArgb()
+                window.statusBarColor = Color.Transparent.toArgb()
+                window.navigationBarColor = Color.Transparent.toArgb()
                 WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = dynamicColor
                 WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = dynamicColor
             }

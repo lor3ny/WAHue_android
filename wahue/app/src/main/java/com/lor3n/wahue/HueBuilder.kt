@@ -3,7 +3,6 @@ package com.lor3n.wahue
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Canvas
-import android.graphics.Matrix
 import androidx.palette.graphics.Palette
 
 
@@ -61,7 +60,7 @@ class HueBuilder constructor(image: Bitmap)
         for (i in 0 until numColorsToExtract) {
             val color = swatches[i].rgb
 
-            val colBitmap = Bitmap.createBitmap(300, startImage.height/5 , Bitmap.Config.ARGB_8888)
+            val colBitmap = Bitmap.createBitmap(200, startImage.height/5 , Bitmap.Config.ARGB_8888)
             val canvas = Canvas(colBitmap)
             canvas.drawColor(color)
             dominantColorsBitmaps.add(colBitmap)
