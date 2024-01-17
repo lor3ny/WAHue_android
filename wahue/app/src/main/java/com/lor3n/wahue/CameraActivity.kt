@@ -1,5 +1,9 @@
 package com.lor3n.wahue
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
@@ -40,7 +44,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -52,12 +58,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
+import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
+
 
 class CameraActivity : AppCompatActivity() {
 
 
     private lateinit var storage: FirebaseStorage
     private lateinit var auth: FirebaseAuth
+    private lateinit var database : FirebaseFirestore
     private var checkImage: Bitmap? = null
 
 
@@ -66,6 +80,7 @@ class CameraActivity : AppCompatActivity() {
 
         auth = Firebase.auth
         storage = Firebase.storage
+        database = Firebase.firestore
 
         enableEdgeToEdge()
         setContent {
@@ -164,6 +179,9 @@ class CameraActivity : AppCompatActivity() {
 
     @Composable
     private fun CheckLayout(onBack: () -> Unit){
+
+        val context = LocalContext.current
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -198,7 +216,7 @@ class CameraActivity : AppCompatActivity() {
                         onClick = {
                             onBack()
                             GlobalScope.launch(Dispatchers.IO) {
-                                UploadPhotos()
+                                UploadPhotos(context)
                             }
                         },
                         modifier = Modifier
@@ -272,7 +290,7 @@ class CameraActivity : AppCompatActivity() {
     }
 
 
-    private fun UploadPhotos(){
+    private fun UploadPhotos(context: Context){
 
         val byteStreamImage = ByteArrayOutputStream()
 
@@ -288,5 +306,39 @@ class CameraActivity : AppCompatActivity() {
         }.addOnFailureListener { exception ->
             println("Not uploaded: "+exception.message)
         }
+
+        val (x,y) = mutableStateOf(0.0 to 0.0)
+
+        uploadLastLocation(context, ranInt)
+
+
+
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun uploadLastLocation(context: Context, code : Int,) {
+        val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
+        val cancellationTokenSource = CancellationTokenSource()
+
+
+        fusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, cancellationTokenSource.token)
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    val lastCoords = hashMapOf(
+                        "latitude" to location.latitude,
+                        "longitude" to location.longitude,
+                    )
+
+                    database.collection(auth.currentUser!!.uid)
+                        .document("image_$code")
+                        .set(lastCoords)
+                        .addOnSuccessListener { documentReference ->
+                            println("Coords uploaded$documentReference")
+                        }
+                        .addOnFailureListener { e ->
+                            println("Coords not uploaded${e.message}")
+                        }
+                }
+            }
     }
 }

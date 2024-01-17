@@ -38,9 +38,12 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddLocation
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Cached
 import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FabPosition
@@ -65,6 +68,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -80,12 +84,15 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.OutputStream
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 
-data class ImageHue(var image: ImageBitmap?, var hue: List<String>?, val code: Int)
+data class ImageHue(var image: ImageBitmap?, var hue: List<String>?, val code: Int, var location: String?)
 class HomepageActivity : ComponentActivity() {
 
     private lateinit var storage: FirebaseStorage
     private lateinit var auth: FirebaseAuth
+    private lateinit var database : FirebaseFirestore
     private var ImagesAndHues = mutableStateListOf<ImageHue>()
     private var selectedImage: ImageHue? = null
 
@@ -95,12 +102,13 @@ class HomepageActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         if (!hasRequiredPermissions()) {
             ActivityCompat.requestPermissions(
-                this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA), 0
+                this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 0
             )
         }
 
         auth = Firebase.auth
         storage = Firebase.storage
+        database = Firebase.firestore
         enableEdgeToEdge()
         setContent {
 
@@ -390,6 +398,18 @@ class HomepageActivity : ComponentActivity() {
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxSize()
                 ) {
+                    Row(){
+                        Icon(
+                            imageVector = Icons.Default.Place,
+                            contentDescription = "Take Photo",
+                            tint = Color.Gray
+                        )
+                        Text(
+                            text = selectedImage!!.location!!,
+                            color = Color.Gray,
+                            //modifier = Modifier.align(Alignment.Start)
+                        )
+                    }
                     Image(
                         bitmap = selectedImage!!.image!!,
                         contentDescription = null,
@@ -444,7 +464,6 @@ class HomepageActivity : ComponentActivity() {
 
     private suspend fun getAllImageUrlsFromFirebaseStorage() {
         val imagesRef = storage.reference.child("${auth.currentUser?.uid}/images/")
-        val huesRef = storage.reference.child("${auth.currentUser?.uid}/hues/")
 
         try {
             val imagesListRefs = imagesRef.listAll().await()
@@ -454,9 +473,36 @@ class HomepageActivity : ComponentActivity() {
                 val bitmapImage: Bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
 
                 val imageCode = imageRef.name.filter { it.isDigit() }.toInt()
-                val imageHue: ImageHue = ImageHue(null, null, imageCode)
+                val imageHue: ImageHue = ImageHue(null, null, imageCode, "0N 0E")
                 var hue: HueBuilder = HueBuilder(bitmapImage)
                 val hueColors: List<String> = hue.BuildHueList()
+
+                database.collection(auth.currentUser!!.uid)
+                    .document("image_${imageCode}")
+                    .get()
+                    .addOnSuccessListener { doc ->
+                        if (doc != null) {
+                            var lat = doc.getDouble("latitude")
+                            var long = doc.getDouble("longitude")
+
+                            val degreesLat = lat!!.toInt() // Extract whole number for degrees
+                            val minutesLatDec = (lat - degreesLat) * 60
+                            val minutesLat = minutesLatDec.toInt() // Extract whole number for minutes
+                            val secondsLat = (minutesLatDec - minutesLat) * 60 // Remaining decimal to seconds
+
+                            val degreesLong = long!!.toInt() // Extract whole number for degrees
+                            val minutesLongDec = (long - degreesLong) * 60
+                            val minutesLong = minutesLongDec.toInt() // Extract whole number for minutes
+                            val secondsLong = (minutesLongDec - minutesLong) * 60 // Remaining decimal to seconds
+
+                            var latString = String.format("%d°%d'%.2f\"N", degreesLat, minutesLat, secondsLat)
+                            var longString = String.format("%d°%d'%.2f\"E", degreesLong, minutesLong, secondsLong)
+                            imageHue.location = "$latString $longString"
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        println("Error downloading coords: ${exception.message}")
+                    }
 
                 imageHue.hue = hueColors
                 imageHue.image = bitmapImage.asImageBitmap()
@@ -504,11 +550,17 @@ class HomepageActivity : ComponentActivity() {
                 applicationContext,
                 it
             ) == PackageManager.PERMISSION_GRANTED
+        } and LOCATION_PERMISSIONS.all {
+            ContextCompat.checkSelfPermission(
+                applicationContext,
+                it
+            ) == PackageManager.PERMISSION_GRANTED
         }
     }
 
     companion object{
         private val CAMERAX_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private val STORAGE_PERMISSIONS = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        private val LOCATION_PERMISSIONS = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION )
     }
 }
