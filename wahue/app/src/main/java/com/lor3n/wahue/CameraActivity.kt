@@ -307,8 +307,6 @@ class CameraActivity : AppCompatActivity() {
             println("Not uploaded: "+exception.message)
         }
 
-        val (x,y) = mutableStateOf(0.0 to 0.0)
-
         uploadLastLocation(context, ranInt)
 
 
